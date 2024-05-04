@@ -12,8 +12,11 @@ WORKDIR /app
 # Add current directory files to /app in container
 ADD . /app
 
+# Install any needed packages specified in requirements.txt
+# RUN pip install --no-cache-dir -r requirements.txt
+
 # Install necessary packages, Flask and ffmpeg-python
-RUN pip install --no-cache-dir flask werkzeug ffmpeg-python requests gunicorn scipy
+RUN pip install --no-cache-dir flask werkzeug ffmpeg-python requests gunicorn scipy moviepy
 
 # Make port 5000 available to the world outside this container
 # EXPOSE 5000

@@ -8,6 +8,7 @@ import os
 import ffmpeg
 from scipy.spatial import distance
 
+from moviepy.editor import VideoFileClip
 
 def create_app():
     app = Flask(__name__, static_folder='uploads', static_url_path='/uploads')
@@ -47,3 +48,51 @@ def cosine_similarity():
 
     return jsonify({'most_similar_text': texts[most_similar_index]})
 
+
+# add a request handler that will take a video file URL and return the length of the video
+
+from moviepy.editor import VideoFileClip
+
+def get_video_length(url):
+    # Download the video file from the URL
+    response = requests.get(url, stream=True)
+    with open('temp_video.mp4', 'wb') as f:
+        for chunk in response.iter_content(chunk_size=1024):
+            if chunk:
+                f.write(chunk)
+    
+    # Get the duration of the video
+    clip = VideoFileClip('temp_video.mp4')
+    duration = clip.duration
+    clip.close()
+    
+    # Delete the temporary video file
+    import os
+    os.remove('temp_video.mp4')
+    
+    return duration
+
+@app.route('/video_length', methods=['POST'])
+def video_length():
+    data = request.json
+    directories = data
+
+    if not directories:
+        return jsonify({'error': 'No directories provided'}), 400
+
+    video_lengths = []
+    for directory in directories:
+        directory_name = directory.get('directory_name')
+        video_url = directory.get('video_url')
+
+        if not video_url:
+            video_lengths.append({'directory_name': directory_name, 'error': 'Video URL not provided'})
+            continue
+
+        try:
+            length = get_video_length(video_url)
+            video_lengths.append({'directory_name': directory_name, 'video_url': video_url, 'length': length})
+        except Exception as e:
+            video_lengths.append({'directory_name': directory_name, 'video_url': video_url, 'error': str(e)})
+
+    return jsonify({'video_lengths': video_lengths}), 200

@@ -1,0 +1,14 @@
+[
+    {
+        "directory_name": "directory1",
+        "video_url": "https://drive.google.com/drive/u/0/my-drive?q=type:video%20parent:0ABI-4bBJyTwaUk9PVA"
+    },
+    {
+        "directory_name": "directory2",
+        "video_url": "https://example.com/video2.mp4"
+    },
+    {
+        "directory_name": "directory3",
+        "video_url": "https://example.com/video3.mp4"
+    }
+]
